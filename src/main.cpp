@@ -31,10 +31,12 @@
 #include "cli.cpp"
 
 
-
 int main(int argc, char **argv) {
-    CliClient cliClient;
-    int returnCode = cliClient.parse(argc, argv);
-    cliClient.tasksAfterParse();
+    
+    cli::CliClient *cliClient = new cli::CliClient(argc, argv);
+    int returnCode = cliClient->parse();
+    cliClient->tasksAfterParse();
+
+    free(cliClient);
     return returnCode;
 }
