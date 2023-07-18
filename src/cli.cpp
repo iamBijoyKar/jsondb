@@ -9,6 +9,7 @@
 const std::string version = "0.0.1";
 const std::string description = "A command line tool for generating json database";
 const std::string _dirname = GetExePath();
+const std::string defaultDbName = "defaultDb.jsonDb";
 
 namespace cli {
     class CliClient {
@@ -28,7 +29,8 @@ namespace cli {
         bool dbInUse{false};
 
         std::string dbPath{_dirname};
-        std::string dbName{"defaultDb"};
+        std::string dbName{defaultDbName};
+        std::string dbDir{_dirname};
 
 
         CliClient(int argc_, char **argv_) {
@@ -59,6 +61,28 @@ namespace cli {
                 }
             });
 
+            auto viewDb = db->add_subcommand("view", "View the database");
+            auto viewAll = viewDb->add_subcommand("all", "View all databases");
+            viewAll->add_option("--path",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
+            viewAll->callback([&]() {
+                std::cout<<"Available databases: "<<std::endl;
+            });
+
+            auto useDb = db->add_subcommand("use", "Use an existing database");
+            useDb->add_option("--name",dbName,"Provide a name for the database");
+            useDb->add_option("--path",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
+            useDb->add_option("--dbDir",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
+            useDb->callback([&]() {
+                if( dbName == defaultDbName && dbPath == _dirname){
+                    dbPtr::viewAllDbPtr(dbPath);
+                } 
+                else if(dbName == defaultDbName && dbPath != _dirname){
+                    dbPtr::viewAllDbPtr(dbPath);
+                }
+                else {
+                    dbPtr::useDbPtr(dbName, dbPath);
+                }
+            });
             
         }
         ~CliClient() {
@@ -71,6 +95,7 @@ namespace cli {
             } catch (const CLI::ParseError &e) {
                 return app.exit(e);
             }
+            return 0;
         }
 
         void tasksAfterParse(){

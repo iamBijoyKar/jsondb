@@ -3,6 +3,8 @@
 #include <string>
 #include<vector>
 #include<unordered_map>
+#include<filesystem>
+#include<userenv.h>
 #include "../include/color.hpp"
 #include "../include/json.hpp"
 
@@ -140,7 +142,7 @@ namespace db {
     }
 
     void createDb(std::string dbName, std::string dbPath) {
-        std::string filePath = dbPath + "\\" + dbName + ".json";
+        std::string filePath = dbPath + "\\" + dbName + ".jsonDb.json";
         std::ofstream f(filePath);
         nlohmann::json data;
         data["name"] = dbName;
@@ -185,9 +187,32 @@ namespace db {
         o.close();
     
     }
+
+    int viewAllDb(std::string dbPath) {
+        std::vector<std::filesystem::path> dbList;
+
+        for (const auto & entry : std::filesystem::directory_iterator(dbPath)) {
+            std::filesystem::path path = entry.path();
+            std::string fileName = path.filename().generic_string();
+            if(fileName.find(".jsonDb.json") != std::string::npos) {
+                dbList.push_back(path.filename().replace_extension(""));
+            }
+        }
+        
+        if(dbList.size() == 0) {
+            std::cout << dye::red("No database found!") << std::endl;
+            return 1;
+        }
+        std::cout << dye::purple("Databases : ") << std::endl;
+        for(auto it:dbList) {
+            std::cout << dye::green(it) << std::endl;
+        }
+        return 0;
+    }
 }
 
 namespace dbPtr{
     void (*createDbPtr)(std::string , std::string ) = &db::createDb;
     void (*useDbPtr)(std::string , std::string ) = &db::useDb;
+    int (*viewAllDbPtr)(std::string ) = &db::viewAllDb;
 }
