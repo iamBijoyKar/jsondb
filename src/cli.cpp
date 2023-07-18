@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include"parser.cpp"
 #include"db.cpp"
 
 #include "../include/CLI11.hpp"
@@ -8,8 +7,8 @@
 
 const std::string version = "0.0.1";
 const std::string description = "A command line tool for generating json database";
-const std::string _dirname = GetExePath();
-const std::string defaultDbName = "defaultDb.jsonDb";
+const std::string _dirname = std::filesystem::current_path().string();
+const std::string defaultDbName = "defaultDb";
 
 namespace cli {
     class CliClient {
@@ -65,7 +64,7 @@ namespace cli {
             auto viewAll = viewDb->add_subcommand("all", "View all databases");
             viewAll->add_option("--path",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
             viewAll->callback([&]() {
-                std::cout<<"Available databases: "<<std::endl;
+                dbPtr::viewAllDbPtr(dbPath);
             });
 
             auto useDb = db->add_subcommand("use", "Use an existing database");
@@ -73,15 +72,7 @@ namespace cli {
             useDb->add_option("--path",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
             useDb->add_option("--dbDir",dbPath,"Provide a path for the database")->check(CLI::ExistingDirectory);
             useDb->callback([&]() {
-                if( dbName == defaultDbName && dbPath == _dirname){
-                    dbPtr::viewAllDbPtr(dbPath);
-                } 
-                else if(dbName == defaultDbName && dbPath != _dirname){
-                    dbPtr::viewAllDbPtr(dbPath);
-                }
-                else {
-                    dbPtr::useDbPtr(dbName, dbPath);
-                }
+                dbPtr::useDbPtr(dbName, dbPath);
             });
             
         }

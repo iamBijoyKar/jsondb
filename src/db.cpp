@@ -148,12 +148,12 @@ namespace db {
         data["name"] = dbName;
         data["tables"] = nlohmann::json::array();
 
-        f << data;
+        f << std::setw(4) << data << std::endl;
         f.close();
     }
 
     void useDb(std::string dbName, std::string dbPath) {
-        std::string filePath = dbPath + "\\" + dbName + ".json";
+        std::string filePath = dbPath + "\\" + dbName + ".jsonDb.json";
         std::ifstream f(filePath);
 
         bool isDbCreated = f.good();
@@ -183,6 +183,9 @@ namespace db {
 
             parseQuery(command,database,o);
 
+        }
+        if(isExit){
+            o << std::setw(4) << database << std::endl;
         }
         o.close();
     
