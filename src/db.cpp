@@ -84,10 +84,43 @@ namespace db {
         }
         database["tables"].push_back(table);
 
-        file << std::setw(4) << database << std::endl;
+        // file << std::setw(4) << database << std::endl;
 
         std::cout << dye::green(tableName) << " Table created " << " " << std::endl;
 
+    }
+
+    void insertData(json &database, std::string tableName, std::string data,std::ofstream &file) {
+        if(data[0] != '{' || data.back() != '}') {
+            std::cout << dye::red("Invalid data!") << std::endl;
+            return;
+        }
+
+        replaceStr(data, '{', ' ');
+        replaceStr(data, '}', ' ');
+
+        std::vector<std::string> dataVector = splitString(data, ",");
+        std::unordered_map<std::string, std::string> dataMap;
+
+        for(auto it:dataVector) {
+            std::vector<std::string> data = splitString(it, ":");
+            dataMap[data[0]] = data[1];
+        }
+
+        for(auto &it:database["tables"]) {
+            if(it["name"] == tableName) {
+                json obj = json::object();
+                for(auto mapIt:dataMap) {
+                    obj[mapIt.first] = mapIt.second;
+                }
+                it["rows"].push_back(obj);
+                // file << std::setw(4) << database << std::endl;
+
+                std::cout << it["rows"].dump(4) << std::endl;
+                return;
+            }
+        }
+        std::cout << dye::red("Table not found!") << std::endl;
     }
 
     void parseQuery(std::string query,json &databse,std::ofstream &file) {
@@ -102,7 +135,7 @@ namespace db {
         }
         else if(queryVector[0] == "INSERT") {
             if(queryVector[1] == "INTO") {
-                std::cout << "Data inserted" << std::endl;
+                insertData(databse, queryVector[2], queryVector[3],file);
             }
             else{
                 std::cout << dye::red("Invalid query!") << std::endl;
@@ -164,6 +197,7 @@ namespace db {
 
         json database = json::parse(f);
         bool isExit = false;
+        bool isFirstCommandExecuted = false;
         f.close();
 
         std::ofstream o(filePath);
@@ -183,10 +217,16 @@ namespace db {
 
             parseQuery(command,database,o);
 
+            if(!isFirstCommandExecuted){
+                isFirstCommandExecuted = true;
+            }
         }
-        if(isExit){
+        if(isExit && !isFirstCommandExecuted){
             o << std::setw(4) << database << std::endl;
+            o.close();
+            return;
         }
+        o << std::setw(4) << database << std::endl;
         o.close();
     
     }
