@@ -7,6 +7,7 @@
 #include<userenv.h>
 #include "../include/color.hpp"
 #include "../include/json.hpp"
+// #include "../include/tabulate.hpp"
 
 using json = nlohmann::json;
 namespace parser {
@@ -38,6 +39,10 @@ std::vector<std::string> splitString(std::string str, std::string delimiter) {
 
 
 namespace db {
+
+    void viewTable(json database,std::string tableName) {
+        std::cout << dye::white_on_aqua(tableName) << std::endl;
+    }
 
     void viewJson(json database,std::string tableName) {
         for(auto it:database["tables"]) {
@@ -162,6 +167,14 @@ namespace db {
                 }
                 else{
                     std::cout << dye::white_on_aqua(databse.dump(4)) << std::endl;
+                }
+            }
+            else if(queryVector[1] == "TABLE"){
+                if(queryVector.size() > 2){
+                    viewTable(databse,queryVector[2]);
+                }
+                else{
+                    std::cout << dye::red("Invalid query!") << std::endl;
                 }
             }
             else{
