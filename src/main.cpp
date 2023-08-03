@@ -37,6 +37,6 @@ int main(int argc, char **argv) {
     int returnCode = cliClient->parse();
     cliClient->tasksAfterParse();
 
-    free(cliClient);
+    delete(cliClient);
     return returnCode;
 }

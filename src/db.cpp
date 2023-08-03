@@ -209,6 +209,7 @@ namespace db {
         }
 
         json database = json::parse(f);
+        json databaseCopy = database;
         bool isExit = false;
         bool isFirstCommandExecuted = false;
         f.close();
@@ -228,11 +229,20 @@ namespace db {
                 continue;
             }
 
-            parseQuery(command,database,o);
+            try{
+                parseQuery(command,database,o);
+            }
+            catch(const std::exception& e){
+                std::cout << dye::red("Error! ") << std::endl;
+                throw e;
+                database = databaseCopy;
+                std::cout << dye::red("The command is exited. Database rolled back to previous state!") << std::endl;
+            }
 
             if(!isFirstCommandExecuted){
                 isFirstCommandExecuted = true;
             }
+            databaseCopy = database;
         }
         if(isExit && !isFirstCommandExecuted){
             o << std::setw(4) << database << std::endl;
