@@ -2,8 +2,8 @@
 #include <string>
 #include"db.cpp"
 
-#include "../include/CLI11.hpp"
-#include "../include/color.hpp"
+#include "include/CLI11.hpp"
+#include "include/color.hpp"
 
 const std::string version = "0.0.1";
 const std::string description = "A command line tool for generating json database";

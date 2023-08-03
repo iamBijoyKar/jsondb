@@ -4,7 +4,14 @@
     {
       "type": "cppbuild",
       "label": "C/C++: g++.exe custom build active file",
-      "command": "g++ ${workspaceFolder}/src/main.cpp -o ${workspaceFolder}/build/main.exe",
+      "command": "g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${file}",
+        "-o",
+        "${fileDirname}\\..\\build\\${fileBasenameNoExtension}.exe"
+      ],
       "options": {
         "cwd": "${fileDirname}"
       },

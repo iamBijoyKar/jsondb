@@ -5,9 +5,8 @@
 #include<unordered_map>
 #include<filesystem>
 #include<userenv.h>
-#include "../include/color.hpp"
-#include "../include/json.hpp"
-// #include "../include/tabulate.hpp"
+#include "include/color.hpp"
+#include "include/json.hpp"
 
 using json = nlohmann::json;
 namespace parser {
