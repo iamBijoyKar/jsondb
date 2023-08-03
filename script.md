@@ -48,3 +48,38 @@ main db create
 main db create --name <database-name>
 
 ```
+
+```
+// for view databases
+main db view all
+// for view databases in path
+main db view all --path <path>
+```
+
+
+
+
+## Database Queries
+
+- ```
+    // for create a table
+    CREATE TABLE <table-name> {<column-name>:<column-type>}
+   ```
+- ```
+    // for viewing json database
+    VIEW JSON
+    // for viewing specific table
+    VIEW JSON <table-name>
+   ```
+- ```
+    // for insert a row
+    INSERT INTO <table-name> {<column-name>:<column-value>}
+   ```
+
+
+- ```
+    // for exit
+    exit
+   ```
+
+
