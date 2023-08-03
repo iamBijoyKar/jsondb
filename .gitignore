@@ -1,6 +1,6 @@
-.vscode/
 /*.exe
 *.msi
 local/
 *.local
 src/*.exe
+**/*.jsonDb.json

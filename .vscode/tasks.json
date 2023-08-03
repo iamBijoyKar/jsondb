@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "C/C++: g++.exe custom build active file",
+      "command": "g++ ${workspaceFolder}/src/main.cpp -o ${workspaceFolder}/build/main.exe",
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": ""
+    },
+    {
+      "type": "process",
+      "label": "C/C++: build/main.exe run active file",
+      "command": "${workspaceFolder}/build/main.exe",
+      "args": [
+        "-h"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build tests Custom C/C++",
+      "type": "shell",
+      "command": "g++ ${workspaceFolder}/tests/*.cpp -o ${workspaceFolder}/build/tests.exe",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run Tests Custom C/C++",
+      "type": "shell",
+      "command": "${workspaceFolder}/build/tests.exe",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
