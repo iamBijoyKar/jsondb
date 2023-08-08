@@ -38,9 +38,37 @@ std::vector<std::string> splitString(std::string str, std::string delimiter) {
 
 
 namespace db {
-
+// todo: add a formatter for terminal output
     void viewTable(json database,std::string tableName) {
-        std::cout << dye::white_on_aqua(tableName) << std::endl;
+        for(auto it:database["tables"]) {
+            if(it["name"]==tableName) {
+                json columns = it["columns"];
+                json rows = it["rows"];
+                std::vector<std::string> columnsOrder;
+                std::cout << std::endl<< " | ";
+                for(auto it:columns) {
+                    std::cout << std::setw(10) << it["name"].dump() << " | ";
+                    columnsOrder.push_back(it["name"]);
+                }
+                std::cout << std::endl;
+                std::cout << std::endl<< " | ";
+                for(auto it:rows) {
+                    for(auto it2:columnsOrder){
+                        if(it.find(it2) == it.end()){
+                            std::cout << std::setw(10) << "NULL" << " | ";
+                            continue;
+                        }
+                        else{
+                            std::cout << std::setw(10) << *it.find(it2) << " | ";
+                        }  
+                    }
+                    std::cout << std::endl << " | ";
+                }
+                std::cout << std::endl;
+                return;
+            }
+        }
+        std::cout << dye::red("Table not found!") << std::endl;
     }
 
     void viewJson(json database,std::string tableName) {
