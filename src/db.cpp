@@ -59,6 +59,8 @@ namespace db {
                 json rows = it["rows"];
                 std::vector<std::string> columnsOrder;
                 int rowCounter = 0;
+                int dashCount = columns.size()*12 + columns.size() -1 + 2;
+                std::cout << " " << std::string(dashCount,'-');
                 std::cout << std::endl<< " | ";
                 for(auto it:columns) {
                     const std::string col = it["name"];
@@ -66,7 +68,10 @@ namespace db {
                     columnsOrder.push_back(it["name"]);
                 }
                 std::cout << std::endl;
-                std::cout << std::endl<< " | ";
+                std::cout << " " << std::string(dashCount,'-') << std::endl;
+                std::cout << std::endl;
+                std::cout << " " << std::string(dashCount,'-') << std::endl;
+                std::cout << " | ";
                 for(auto it:rows) {
                     for(auto it2:columnsOrder){
                         if(it.find(it2) == it.end()){
@@ -83,6 +88,8 @@ namespace db {
                         std::cout << std::endl << " | ";
                     }
                 }
+                std::cout << std::endl;
+                std::cout << " " << std::string(dashCount,'-') << std::endl;
                 std::cout << std::endl << std::endl;
                 return;
             }
