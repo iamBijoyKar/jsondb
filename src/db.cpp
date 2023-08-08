@@ -36,18 +36,33 @@ std::vector<std::string> splitString(std::string str, std::string delimiter) {
     return splittedString;
 }
 
+//* trim string from both sides
+std::string trim(const std::string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    if (std::string::npos == first)
+    {
+        return str;
+    }
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
+
 
 namespace db {
 // todo: add a formatter for terminal output
+// temporary table format added for terminal output
     void viewTable(json database,std::string tableName) {
         for(auto it:database["tables"]) {
             if(it["name"]==tableName) {
                 json columns = it["columns"];
                 json rows = it["rows"];
                 std::vector<std::string> columnsOrder;
+                int rowCounter = 0;
                 std::cout << std::endl<< " | ";
                 for(auto it:columns) {
-                    std::cout << std::setw(10) << it["name"].dump() << " | ";
+                    const std::string col = it["name"];
+                    std::cout << std::left << std::setw(10) << col << " | ";
                     columnsOrder.push_back(it["name"]);
                 }
                 std::cout << std::endl;
@@ -59,12 +74,16 @@ namespace db {
                             continue;
                         }
                         else{
-                            std::cout << std::setw(10) << *it.find(it2) << " | ";
+                            const std::string rowData = *it.find(it2);
+                            std::cout << std::left << std::setw(10) << rowData << " | ";
                         }  
                     }
-                    std::cout << std::endl << " | ";
+                    rowCounter++;
+                    if(rowCounter < rows.size()){
+                        std::cout << std::endl << " | ";
+                    }
                 }
-                std::cout << std::endl;
+                std::cout << std::endl << std::endl;
                 return;
             }
         }
@@ -102,7 +121,7 @@ namespace db {
         std::unordered_map<std::string, std::string> columnsMap;
         for(auto it:columns){
             std::vector<std::string> column = splitString(it, ":");
-            columnsMap[column[0]] = column[1];
+            columnsMap[trim(column[0])] = trim(column[1]); // trim column name and type
         }
 
         json table = json::object();
@@ -136,7 +155,7 @@ namespace db {
 
         for(auto it:dataVector) {
             std::vector<std::string> data = splitString(it, ":");
-            dataMap[data[0]] = data[1];
+            dataMap[trim(data[0])] = trim(data[1]); // trim column name and type 
         }
 
         for(auto &it:database["tables"]) {
@@ -146,9 +165,13 @@ namespace db {
                     obj[mapIt.first] = mapIt.second;
                 }
                 it["rows"].push_back(obj);
-                // file << std::setw(4) << database << std::endl;
-
-                std::cout << it["rows"].dump(4) << std::endl;
+                // success message and data view
+                std::cout << dye::green("Data inserted successfully!") << std::endl;
+                std::cout << "| ";
+                for(auto it:obj){
+                    std::cout << std::setw(10) << it << " |";
+                }
+                std::cout << std::endl;
                 return;
             }
         }
