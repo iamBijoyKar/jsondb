@@ -7,6 +7,7 @@
 #include<userenv.h>
 #include "include/color.hpp"
 #include "include/json.hpp"
+#include "table-print.cpp"
 
 using json = nlohmann::json;
 namespace parser {
@@ -51,46 +52,12 @@ std::string trim(const std::string& str)
 
 namespace db {
 // todo: add a formatter for terminal output
-// temporary table format added for terminal output
     void viewTable(json database,std::string tableName) {
         for(auto it:database["tables"]) {
             if(it["name"]==tableName) {
                 json columns = it["columns"];
                 json rows = it["rows"];
-                std::vector<std::string> columnsOrder;
-                int rowCounter = 0;
-                int dashCount = columns.size()*12 + columns.size() -1 + 2;
-                std::cout << " " << std::string(dashCount,'-');
-                std::cout << std::endl<< " | ";
-                for(auto it:columns) {
-                    const std::string col = it["name"];
-                    std::cout << std::left << std::setw(10) << col << " | ";
-                    columnsOrder.push_back(it["name"]);
-                }
-                std::cout << std::endl;
-                std::cout << " " << std::string(dashCount,'-') << std::endl;
-                std::cout << std::endl;
-                std::cout << " " << std::string(dashCount,'-') << std::endl;
-                std::cout << " | ";
-                for(auto it:rows) {
-                    for(auto it2:columnsOrder){
-                        if(it.find(it2) == it.end()){
-                            std::cout << std::setw(10) << "NULL" << " | ";
-                            continue;
-                        }
-                        else{
-                            const std::string rowData = *it.find(it2);
-                            std::cout << std::left << std::setw(10) << rowData << " | ";
-                        }  
-                    }
-                    rowCounter++;
-                    if(rowCounter < rows.size()){
-                        std::cout << std::endl << " | ";
-                    }
-                }
-                std::cout << std::endl;
-                std::cout << " " << std::string(dashCount,'-') << std::endl;
-                std::cout << std::endl << std::endl;
+                tablePrint::printTable(columns,rows); // formatted output of table data
                 return;
             }
         }
