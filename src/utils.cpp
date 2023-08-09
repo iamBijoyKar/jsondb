@@ -44,5 +44,13 @@ namespace utils{
             size_t last = str.find_last_not_of(' ');
             return str.substr(first, (last - first + 1));
         }
+
+        int stringToInt(std::string str){
+            int num = 0;
+            for(int i = 0; i < str.length(); i++){
+                num = num*10 + (str[i] - '0');
+            }
+            return num;
+        }
     }
 }
