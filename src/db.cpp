@@ -8,47 +8,8 @@
 #include "include/color.hpp"
 #include "include/json.hpp"
 #include "table-print.cpp"
-
+#include "utils.cpp"
 using json = nlohmann::json;
-namespace parser {
-
-}
-
-void replaceStr(std::string &str, const char from, const char to) {
-    std::string::iterator it;
-    for(it = str.begin(); it < str.end(); it++) {
-        if(*it == from) {
-            *it = to;
-        }
-    }
-}
-
-
-std::vector<std::string> splitString(std::string str, std::string delimiter) {
-    std::vector<std::string> splittedString;
-    size_t pos = 0;
-    std::string token;
-    while ((pos = str.find(delimiter)) != std::string::npos) {
-        token = str.substr(0, pos);
-        splittedString.push_back(token);
-        str.erase(0, pos + delimiter.length());
-    }
-    splittedString.push_back(str);
-    return splittedString;
-}
-
-//* trim string from both sides
-std::string trim(const std::string& str)
-{
-    size_t first = str.find_first_not_of(' ');
-    if (std::string::npos == first)
-    {
-        return str;
-    }
-    size_t last = str.find_last_not_of(' ');
-    return str.substr(first, (last - first + 1));
-}
-
 
 namespace db {
 // todo: add a formatter for terminal output
@@ -87,15 +48,15 @@ namespace db {
             return;
         }
 
-        replaceStr(columnsData, '{', ' ');
-        replaceStr(columnsData, '}', ' ');
+        utils::string::replaceStr(columnsData, '{', ' ');
+        utils::string::replaceStr(columnsData, '}', ' ');
 
-        std::vector<std::string> columns = splitString(columnsData, ",");
+        std::vector<std::string> columns = utils::string::splitString(columnsData, ",");
 
         std::unordered_map<std::string, std::string> columnsMap;
         for(auto it:columns){
-            std::vector<std::string> column = splitString(it, ":");
-            columnsMap[trim(column[0])] = trim(column[1]); // trim column name and type
+            std::vector<std::string> column = utils::string::splitString(it, ":");
+            columnsMap[utils::string::trim(column[0])] = utils::string::trim(column[1]); // trim column name and type
         }
 
         json table = json::object();
@@ -121,15 +82,15 @@ namespace db {
             return;
         }
 
-        replaceStr(data, '{', ' ');
-        replaceStr(data, '}', ' ');
+        utils::string::replaceStr(data, '{', ' ');
+        utils::string::replaceStr(data, '}', ' ');
 
-        std::vector<std::string> dataVector = splitString(data, ",");
+        std::vector<std::string> dataVector = utils::string::splitString(data, ",");
         std::unordered_map<std::string, std::string> dataMap;
 
         for(auto it:dataVector) {
-            std::vector<std::string> data = splitString(it, ":");
-            dataMap[trim(data[0])] = trim(data[1]); // trim column name and type 
+            std::vector<std::string> data = utils::string::splitString(it, ":");
+            dataMap[utils::string::trim(data[0])] = utils::string::trim(data[1]); // trim column name and type 
         }
 
         for(auto &it:database["tables"]) {
@@ -153,7 +114,7 @@ namespace db {
     }
 
     void parseQuery(std::string query,json &databse,std::ofstream &file) {
-        std::vector<std::string> queryVector = splitString(query, " ");
+        std::vector<std::string> queryVector = utils::string::splitString(query, " ");
         if(queryVector[0] == "CREATE") {
             if(queryVector[1] == "TABLE") {
                 createTable(databse, queryVector[2], queryVector[3],file);
