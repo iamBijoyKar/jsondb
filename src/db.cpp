@@ -1,14 +1,12 @@
 #include <fstream>
 #include <iostream>
-#include <string>
-#include<vector>
-#include<unordered_map>
-#include<filesystem>
-#include<userenv.h>
+#include <vector>
+#include <unordered_map>
 #include "include/color.hpp"
 #include "include/json.hpp"
-#include "table-print.cpp"
+#include "table.cpp"
 #include "utils.cpp"
+
 using json = nlohmann::json;
 
 namespace db {
@@ -73,6 +71,7 @@ namespace db {
         // file << std::setw(4) << database << std::endl;
 
         std::cout << dye::green(tableName) << " Table created " << " " << std::endl;
+        tablePrint::printColumns(table["columns"]);
 
     }
 
@@ -102,15 +101,35 @@ namespace db {
                 it["rows"].push_back(obj);
                 // success message and data view
                 std::cout << dye::green("Data inserted successfully!") << std::endl;
-                std::cout << "| ";
-                for(auto it:obj){
-                    std::cout << std::setw(10) << it << " |";
-                }
+                json tempRow = json::array();
+                tempRow.push_back(obj);
+                tablePrint::printTable(it["columns"],tempRow);
                 std::cout << std::endl;
                 return;
             }
         }
         std::cout << dye::red("Table not found!") << std::endl;
+    }
+
+    void selectRows(json &database, std::vector<std::string> query){
+        std::string tableName = query[3];
+        bool isAll = query[1] == "*" ? true : false;
+        if(query.size() == 4){
+            json table = dbtable::findTable(database,tableName);
+            if(table.is_null()){
+                std::cout << dye::red("Table not found!") << std::endl;
+                return;
+            }
+            json rows = table["rows"];
+            json columns = table["columns"];
+            if(isAll){
+                tablePrint::printTable(columns,rows);
+            }
+            else{
+                tablePrint::printTable(columns,rows,utils::string::stringToInt(query[1]));
+            }
+        }
+
     }
 
     void parseQuery(std::string query,json &databse,std::ofstream &file) {
@@ -132,8 +151,11 @@ namespace db {
             }
         }
         else if(queryVector[0] == "SELECT") {
-            if(queryVector[1] == "*") {
-                std::cout << "Data selected" << std::endl;
+            if(queryVector.size() >= 4 && queryVector[2] == "FROM") {
+                selectRows(databse,queryVector);
+            }
+            else{
+                std::cout << dye::red("Invalid query!") << std::endl;
             }
         }
         else if(queryVector[0] == "UPDATE") {

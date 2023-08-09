@@ -1,6 +1,5 @@
 #include <iostream>
-#include <string>
-#include"db.cpp"
+#include "db.cpp"
 
 #include "include/CLI11.hpp"
 #include "include/color.hpp"
