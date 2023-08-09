@@ -17,7 +17,7 @@ namespace tablePrint{
         }
         std::cout << std::endl;
         std::cout << " " << std::string(dashCount,'-') << std::endl;
-        std::cout << std::endl;
+        // std::cout << std::endl; // extra line removed between column names and rows
         std::cout << " " << std::string(dashCount,'-') << std::endl;
         std::cout << " | ";
         for(auto it:rows) {
@@ -40,5 +40,18 @@ namespace tablePrint{
         std::cout << " " << std::string(dashCount,'-') << std::endl;
         std::cout << std::endl << std::endl;
         return;
+    }
+
+    void printColumns(json columns){
+        int dashCount = columns.size()*12 + columns.size() -1 + 2;
+        std::cout << " " << std::string(dashCount,'-');
+        std::cout << std::endl<< " | ";
+        for(auto it:columns) {
+            const std::string col = it["name"];
+            std::cout << std::left << std::setw(10) << col << " | ";
+        }
+        std::cout << std::endl;
+        std::cout << " " << std::string(dashCount,'-') << std::endl;
+        std::cout << std::endl;
     }
 }

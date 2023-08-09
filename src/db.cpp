@@ -73,6 +73,7 @@ namespace db {
         // file << std::setw(4) << database << std::endl;
 
         std::cout << dye::green(tableName) << " Table created " << " " << std::endl;
+        tablePrint::printColumns(table["columns"]);
 
     }
 
@@ -102,10 +103,9 @@ namespace db {
                 it["rows"].push_back(obj);
                 // success message and data view
                 std::cout << dye::green("Data inserted successfully!") << std::endl;
-                std::cout << "| ";
-                for(auto it:obj){
-                    std::cout << std::setw(10) << it << " |";
-                }
+                json tempRow = json::array();
+                tempRow.push_back(obj);
+                tablePrint::printTable(it["columns"],tempRow);
                 std::cout << std::endl;
                 return;
             }
