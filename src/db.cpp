@@ -1,14 +1,12 @@
 #include <fstream>
 #include <iostream>
-#include <string>
-#include<vector>
-#include<unordered_map>
-#include<filesystem>
-#include<userenv.h>
+#include <vector>
+#include <unordered_map>
 #include "include/color.hpp"
 #include "include/json.hpp"
 #include "table.cpp"
 #include "utils.cpp"
+
 using json = nlohmann::json;
 
 namespace db {
